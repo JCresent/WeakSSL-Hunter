@@ -3,4 +3,5 @@
 ## Looks for within the app:
 - Internet permission
 - If it allows all hostnames
-- If using HTTPS
+- If using HTTPS or HTTP (unsercured)
+- Overriden TrustManagers 
