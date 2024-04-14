@@ -67,9 +67,23 @@ def getPackagePath(app):
     print(pkg)
     return pkg
 
-def analyzeSmali(package):
-    pass
+def analyzeHTTP(package):
+    #Change directory to the package directory
+    outputText.write("Analyzing HTTP errors..." + "\n")
+    result = subprocess.run(["grep", "-rl", "http://", package], capture_output=True, text=True)
+    if result.stdout:
+        filepaths = result.stdout.splitlines()
+        for path in filepaths:
+            outputText.write("HTTP Error found in: " + path + "\n")
+            print("HTTP Error found in: " + path)
+    outputText.write("HTTP use count = " + str(len(filepaths)) + "\n")
+    outputText.write("\n")
 
+    def analyzeCustomTrustMangers():
+        pass
+
+    def analyzeHostnameVerifier():
+        pass
 
 
 def main():
@@ -93,10 +107,16 @@ def main():
     if findInternetPermission(app) == True:
         #print("App has INTERNET permission")
         path = getPackagePath(app)
-        analyzeSmali(path)
+        analyzeHTTP(path)
+        analyzeCustomTrustMangers()
+        analyzeHostnameVerifier()
+
     else:
         print("App does not have INTERNET permission, no need to go any further. Exiting...")
         sys.exit(1)
+
+    outputText.close()
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
