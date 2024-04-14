@@ -62,8 +62,9 @@ def getPackagePath(app):
     resultStr = result.stdout
     start = resultStr.find('package="') + 9
     end = resultStr.find('"', start)
-    pkg = resultStr[start:end]
-    #print(pkg)
+    pkg = app + "/" + "smali/" + resultStr[start:end]
+    pkg = pkg.replace(".", "/")
+    print(pkg)
     return pkg
 
 def analyzeSmali(package):
@@ -77,7 +78,7 @@ def main():
     if not inputAPK:
         print("Invalid input, try: python Cresent-analyze.py -i target-app.apk -o output.txt")
         sys.exit(1)
-    print("APK path: " + inputAPK)
+    # print("APK path: " + inputAPK)
 
     #Use apktool to decompile APK
     # os.system("apktool d " + inputAPK)
@@ -86,13 +87,13 @@ def main():
     start = inputAPK.find("/") + 1
     end = inputAPK.find(".apk")
     app = inputAPK[start:end]
-    print("App name: " + app)
+    # print("App name: " + app)
 
     #First checking if app has INTERNET permission, if not no need to check for SSL errors
     if findInternetPermission(app) == True:
         #print("App has INTERNET permission")
         path = getPackagePath(app)
-        analyzeSmali(package)
+        analyzeSmali(path)
     else:
         print("App does not have INTERNET permission, no need to go any further. Exiting...")
         sys.exit(1)
