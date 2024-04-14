@@ -20,13 +20,22 @@ def inputValidation(argc, argv):
     outputText = open(argv[4], "a")
     return argv[2]
 
+
 def findInternetPermission(app):
     #Change directory to the decompiled app directory
-    os.chdir(app)
+    try:
+        os.chdir(app)
+        #print(os.getcwd())
+    except:
+        print("Error: App directory not found")
+        return False
+    
     permission = "android.permission.INTERNET"
     manifest = "AndroidManifest.xml"
     grep_command = f"grep -r '{permission}' {manifest}"
     result = subprocess.run(grep_command, shell=True, capture_output=True, text=True)
+    os.chdir('..')
+    #print(os.getcwd())
 
     # Print the output
     #print(result.stdout)
@@ -34,8 +43,33 @@ def findInternetPermission(app):
         return False
     return True
 
-def analyzeSmali():
+
+def getPackagePath(app):
+
+    #Change directory to package directory (app code) using grep to find package
+    try:
+        os.chdir(app)
+        #print(os.getcwd())
+    except:
+        print("Error: App directory not found")
+        return False
+    
+    permission = "package="
+    manifest = "AndroidManifest.xml"
+    grep_command = f"grep -r '{permission}' {manifest}"
+    result = subprocess.run(grep_command, shell=True, capture_output=True, text=True)
+    os.chdir('..')
+    resultStr = result.stdout
+    start = resultStr.find('package="') + 9
+    end = resultStr.find('"', start)
+    pkg = resultStr[start:end]
+    #print(pkg)
+    return pkg
+
+def analyzeSmali(package):
     pass
+
+
 
 def main():
     #Check command input is valid and then get APK path str
@@ -57,7 +91,8 @@ def main():
     #First checking if app has INTERNET permission, if not no need to check for SSL errors
     if findInternetPermission(app) == True:
         #print("App has INTERNET permission")
-        analyzeSmali()
+        path = getPackagePath(app)
+        analyzeSmali(package)
     else:
         print("App does not have INTERNET permission, no need to go any further. Exiting...")
         sys.exit(1)
