@@ -67,23 +67,26 @@ def getPackagePath(app):
     print(pkg)
     return pkg
 
-def analyzeHTTP(package):
+def analyzeHTTP(pkgPath):
     #Change directory to the package directory
     outputText.write("Analyzing HTTP errors..." + "\n")
-    result = subprocess.run(["grep", "-rl", "http://", package], capture_output=True, text=True)
+    result = subprocess.run(["grep", "-rl", "http://", pkgPath], capture_output=True, text=True)
     if result.stdout:
         filepaths = result.stdout.splitlines()
         for path in filepaths:
-            outputText.write("HTTP Error found in: " + path + "\n")
-            print("HTTP Error found in: " + path)
-    outputText.write("HTTP use count = " + str(len(filepaths)) + "\n")
+            outputText.write("HTTP use found in: " + path + "\n")
+            #print("HTTP Error found in: " + path)
+        outputText.write("HTTP use count = " + str(len(filepaths)) + "\n")
+    else:
+        outputText.write("No HTTP use found." + "\n")
+        #print("No HTTP errors found.")
     outputText.write("\n")
 
-    def analyzeCustomTrustMangers():
-        pass
+def analyzeCustomTrustMangers(pkgPath):
+    pass
 
-    def analyzeHostnameVerifier():
-        pass
+def analyzeHostnameVerifier(pkgPath):
+    pass
 
 
 def main():
@@ -98,9 +101,14 @@ def main():
     # os.system("apktool d " + inputAPK)
 
     #Slice apk path to get path to the decomplied app directory 
-    start = inputAPK.find("/") + 1
-    end = inputAPK.find(".apk")
-    app = inputAPK[start:end]
+    # first checks if it is in a directory 
+    if "/" in inputAPK:
+        start = inputAPK.rfind("/") + 1
+        end = inputAPK.find(".apk")
+        app = inputAPK[start:end]
+    else:
+        end = inputAPK
+
     # print("App name: " + app)
 
     #First checking if app has INTERNET permission, if not no need to check for SSL errors
@@ -108,8 +116,8 @@ def main():
         #print("App has INTERNET permission")
         path = getPackagePath(app)
         analyzeHTTP(path)
-        analyzeCustomTrustMangers()
-        analyzeHostnameVerifier()
+        analyzeCustomTrustMangers(path)
+        analyzeHostnameVerifier(path)
 
     else:
         print("App does not have INTERNET permission, no need to go any further. Exiting...")
