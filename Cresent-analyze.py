@@ -69,8 +69,8 @@ def getPackagePath(app):
 
 def analyzeHTTP(pkgPath):
     #Change directory to the package directory
-    outputText.write("Analyzing HTTP errors..." + "\n")
-    result = subprocess.run(["grep", "-rl", "http://", pkgPath], capture_output=True, text=True)
+    outputText.write("Analyzing unsecure HTTP use..." + "\n")
+    result = subprocess.run(["grep", "-r", "http://", pkgPath], capture_output=True, text=True)
     if result.stdout:
         filepaths = result.stdout.splitlines()
         for path in filepaths:
@@ -86,8 +86,34 @@ def analyzeCustomTrustMangers(pkgPath):
     pass
 
 def analyzeHostnameVerifier(pkgPath):
-    pass
+    #Change directory to the package directory
+    outputText.write("Analyzing AllHostNameVerifier use..." + "\n")
+    result = subprocess.run(["grep", "-r", "org.apache.http.conn.ssl.AllowAllHostnameVerifier", pkgPath], capture_output=True, text=True)
+    if result.stdout:
+        filepaths = result.stdout.splitlines()
+        for path in filepaths:
+            outputText.write("AllHostNameVerifier use found in: " + path + "\n")
+            #print("HTTP Error found in: " + path)
+        outputText.write("AllHostNameVerifier use count = " + str(len(filepaths)) + "\n")
+    else:
+        outputText.write("No AllHostNameVerifier found." + "\n")
+        #print("No HTTP errors found.")
+    outputText.write("\n")
 
+def analyzeSSLErrorHandler(pkgPath):
+    #Change directory to the package directory
+    outputText.write("Analyzing SSLErrorHandler overiding use..." + "\n")
+    result = subprocess.run(["grep", "-r", "SslErrorHandler", pkgPath], capture_output=True, text=True)
+    if result.stdout:
+        filepaths = result.stdout.splitlines()
+        for path in filepaths:
+            outputText.write("SSLErrorHandler overide found in: " + path + "\n")
+            #print("HTTP Error found in: " + path)
+        outputText.write("SSLErrorHandler overide count = " + str(len(filepaths)) + "\n")
+    else:
+        outputText.write("No SSLErrorHandlers overiden." + "\n")
+        #print("No HTTP errors found.")
+    outputText.write("\n")
 
 def main():
     #Check command input is valid and then get APK path str
@@ -118,6 +144,7 @@ def main():
         analyzeHTTP(path)
         analyzeCustomTrustMangers(path)
         analyzeHostnameVerifier(path)
+        analyzeSSLErrorHandler(path)
 
     else:
         print("App does not have INTERNET permission, no need to go any further. Exiting...")
