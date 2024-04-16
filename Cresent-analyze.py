@@ -24,7 +24,7 @@ def inputValidation(argc, argv):
 def findInternetPermission(app):
     #Change directory to the decompiled app directory
     try:
-       os.chdir(app)
+        os.chdir(app)
         #print(os.getcwd())
     except:
         print("Error: App directory not found")
