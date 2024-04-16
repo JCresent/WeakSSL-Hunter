@@ -4,4 +4,4 @@
 - Allows all hostnames
 - If using HTTPS or HTTP (unsecured) (Mixed-mode/No SSL use)
 - Overides SslErrorHandler method used with the android.webkit (Incorrectly/Without checking certificate)
-- Overriden TrustManagers which allows trust to all certificates
+- Overriden TrustManager methods: specifically looked for overriden checkServerTrusted method
