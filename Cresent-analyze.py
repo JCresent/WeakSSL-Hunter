@@ -63,7 +63,7 @@ def getPackagePath(app):
     end = resultStr.find('"', start)
     pkg = app + "/" + "smali/" + resultStr[start:end]
     pkg = pkg.replace(".", "/")
-    print(pkg)
+    #print(pkg)
     return pkg
 
 def analyzeHTTP(pkgPath):
@@ -135,7 +135,7 @@ def main():
     #print("APK path: " + inputAPK)
 
     #Use apktool to decompile APK
-    os.system("apktool d " + inputAPK)
+    subprocess.run(f'apktool d "{inputAPK}"', shell=True)
 
     #Slice apk path to get path to the decomplied app directory 
     # first checks if it is in a directory 
