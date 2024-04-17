@@ -135,7 +135,7 @@ def main():
     #print("APK path: " + inputAPK)
 
     #Use apktool to decompile APK
-    #os.system("apktool d " + inputAPK)
+    os.system("apktool d " + inputAPK)
 
     #Slice apk path to get path to the decomplied app directory 
     # first checks if it is in a directory 
